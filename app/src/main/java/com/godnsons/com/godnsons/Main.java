@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -17,7 +18,7 @@ public class Main extends ActionBarActivity {
 
     private InterstitialAd mInterstitialAd;
     private CountDownTimer mCountDownTimer;
-
+    private int counter=0;
 
 
 
@@ -36,9 +37,8 @@ public class Main extends ActionBarActivity {
         WebView view=(WebView) this.findViewById(R.id.webView);
         view.getSettings().setJavaScriptEnabled(true);
         view.loadUrl(url);
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+
+
 
         view.setWebViewClient(new WebViewClient() {
             @Override
@@ -47,7 +47,7 @@ public class Main extends ActionBarActivity {
                 return false;
             }
         });
-        mCountDownTimer = new CountDownTimer(100000, 50) {
+        mCountDownTimer = new CountDownTimer(20000, 50) {
             @Override
             public void onTick(long millisUnitFinished) {
                 //textView.setText("seconds remaining: " + ((millisUnitFinished / 1000) + 1));
@@ -57,6 +57,10 @@ public class Main extends ActionBarActivity {
             public void onFinish() {
                 //textView.setText("done!");
                 //mRetryButton.setVisibility(View.VISIBLE);
+                AdView mAdView = (AdView) findViewById(R.id.adView);
+                AdRequest adRequest = new AdRequest.Builder().build();
+                mAdView.loadAd(adRequest);
+                counter += 20000;
                 showInterstitial();
             }
         };
@@ -102,10 +106,12 @@ public class Main extends ActionBarActivity {
 
     private void showInterstitial() {
         // Show the ad if it's ready. Otherwise toast and restart the game.
-        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+        if (mInterstitialAd != null && mInterstitialAd.isLoaded() && counter == 60000) {
             mInterstitialAd.show();
+            counter = 0;
+            //Toast.makeText(this, counter, Toast.LENGTH_SHORT).show();
         } else {
-            //Toast.makeText(this, "Ad did not load", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, counter, Toast.LENGTH_SHORT).show();
             startGame();
         }
     }
@@ -113,8 +119,10 @@ public class Main extends ActionBarActivity {
     private void startGame() {
         // Hide the retry button, load the ad, and start the timer.
         //mRetryButton.setVisibility(View.INVISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mInterstitialAd.loadAd(adRequest);
+        if (!mInterstitialAd.isLoaded()) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mInterstitialAd.loadAd(adRequest);
+        }
         mCountDownTimer.start();
     }
 }

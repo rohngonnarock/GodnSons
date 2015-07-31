@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.godnsons.com.godnsons" >
+    package="com.godnsons.com.godnsons"
+    android:versionCode="2"
+    android:versionName="1.5">
 
     <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
